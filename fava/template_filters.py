@@ -104,6 +104,8 @@ def format_date(date):
     """Format a date according to the current interval."""
     if g.interval is Interval.YEAR:
         return date.strftime("%Y")
+    if g.interval is Interval.BIANUAL:
+        return "{}H{}".format(date.year, (date.month - 1) // 6 + 1)
     if g.interval is Interval.QUARTER:
         return "{}Q{}".format(date.year, (date.month - 1) // 3 + 1)
     if g.interval is Interval.MONTH:

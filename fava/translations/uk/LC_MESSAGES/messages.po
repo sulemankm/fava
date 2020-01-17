@@ -470,6 +470,10 @@ msgstr "Імпортувати записи"
 msgid "Yearly"
 msgstr ""
 
+#: fava/static/javascript/ChartSwitcher.svelte:82 fava/util/date.py:54
+msgid "Bianually"
+msgstr ""
+
 #: fava/static/javascript/ChartSwitcher.svelte:83 fava/util/date.py:55
 msgid "Quarterly"
 msgstr ""

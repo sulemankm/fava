@@ -13,7 +13,7 @@ import {
 export const urlHash = writable("");
 
 export const conversion = writable("");
-type Interval = "year" | "quarter" | "month" | "week" | "day";
+type Interval = "year" | "bianual" | "quarter" | "month" | "week" | "day";
 export const interval: Writable<Interval> = writable("month");
 
 export const favaAPIValidator = object({

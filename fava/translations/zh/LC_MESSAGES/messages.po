@@ -470,6 +470,10 @@ msgstr "导入项目"
 msgid "Yearly"
 msgstr "按年"
 
+#: fava/static/javascript/ChartSwitcher.svelte:82 fava/util/date.py:54
+msgid "Bianually"
+msgstr ""
+
 #: fava/static/javascript/ChartSwitcher.svelte:83 fava/util/date.py:55
 msgid "Quarterly"
 msgstr "按季"

@@ -66,6 +66,7 @@ def parse_budgets(custom_entries):
         "weekly": Interval.WEEK,
         "monthly": Interval.MONTH,
         "quarterly": Interval.QUARTER,
+        "bianually": Interval.BIANUAL,
         "yearly": Interval.YEAR,
     }
 

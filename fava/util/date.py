@@ -26,6 +26,9 @@ WEEK_RE = re.compile(r"^(\d{4})-w(\d{2})$")
 # this matches a quarter like 2016-Q1 for the first quarter of 2016
 QUARTER_RE = re.compile(r"^(\d{4})-q(\d)$")
 
+# this matches a year half like 2016-H1 for the first half of 2016
+BIANNUAL_RE = re.compile(r"^(\d{4})-h(\d)$")
+
 # this matches a financial year like FY2018 for the financial year ending 2018
 FY_RE = re.compile(r"^fy(\d{4})$")
 
@@ -42,6 +45,7 @@ class Interval(enum.Enum):
     """The possible intervals."""
 
     YEAR = "year"
+    BIANUAL = "bianual"
     QUARTER = "quarter"
     MONTH = "month"
     WEEK = "week"
@@ -52,6 +56,7 @@ class Interval(enum.Enum):
         """The label for the interval."""
         return {
             Interval.YEAR: gettext("Yearly"),
+            Interval.BIANUAL: gettext("Bianually"),
             Interval.QUARTER: gettext("Quarterly"),
             Interval.MONTH: gettext("Monthly"),
             Interval.WEEK: gettext("Weekly"),
@@ -90,6 +95,8 @@ def get_next_interval(
     try:
         if interval is Interval.YEAR:
             return datetime.date(date.year + 1, 1, 1)
+        if interval is Interval.BIANUAL:
+            return 2 if (date.month < 7) else 1
         if interval is Interval.QUARTER:
             for i in [4, 7, 10]:
                 if date.month < i:
@@ -158,6 +165,11 @@ def substitute(string: str, fye: Optional[str] = None) -> str:
         if interval == "year":
             year = today.year + plusminus * mod
             string = string.replace(complete_match, str(year))
+        if interval == "bianual":
+            half = 1 if (today.month < 7) else 2
+            string = string.replace(
+                complete_match, "{}-H{}".format(year, half)
+            )
         if interval == "fiscal_quarter":
             target = month_offset(today.replace(day=1), plusminus * mod * 3)
             start, end = get_fiscal_period(target.year, fye)
@@ -240,6 +252,13 @@ def parse_date(
         year = int(match.group(0))
         start = datetime.date(year, 1, 1)
         return start, get_next_interval(start, Interval.YEAR)
+
+    match = BIANNUAL_RE.match(string)
+    if match:
+        year, half = map(int, match.group(1, 2))
+        month = 1 if (half == 1) else 7
+        start = datetime.date(year, month, 1)
+        return start, get_next_interval(start, Interval.BIANUAL)
 
     match = MONTH_RE.match(string)
     if match:
@@ -386,6 +405,10 @@ def number_of_days_in_period(interval: Interval, date: datetime.date) -> int:
         quarter = (date.month - 1) / 3 + 1
         date = datetime.date(date.year, int(quarter) * 3 - 2, 1)
         return (get_next_interval(date, Interval.QUARTER) - date).days
+    if interval is Interval.BIANUAL:
+        # half = (date.month // 6) + 1
+        date = datetime.date(date.year, date.month, 1)
+        return (get_next_interval(date, Interval.BIANUAL) - date).days
     if interval is Interval.YEAR:
         date = datetime.date(date.year, 1, 1)
         return (get_next_interval(date, Interval.YEAR) - date).days

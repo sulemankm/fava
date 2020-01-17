@@ -5,6 +5,7 @@
 
   const intervals = {
     year: _("Yearly"),
+    bianual: _("Bianually"),
     quarter: _("Quarterly"),
     month: _("Monthly"),
     week: _("Weekly"),
